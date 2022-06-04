@@ -75,10 +75,7 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
         },
         onAttackComplete
       );
-      // once('AttackComplete', function(from, newBossHp, newPlayerHp){
-      //   console.log("AttackComplete event fired", from, newBossHp, newPlayerHp);
-      //   //onAttackComplete();
-      // });
+     
     }
 
     /*

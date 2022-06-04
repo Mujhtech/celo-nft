@@ -82,18 +82,6 @@ const SelectCharacter = ({ setCharacterNFT, minterContract, address }) => {
         onCharacterMint
       );
 
-      // .once(
-      //   "CharacterNFTMinted",
-      //   function (sender, tokenId, characterIndex) {
-      //     console.log(
-      //       "onCharacterMint event fired",
-      //       sender,
-      //       tokenId,
-      //       characterIndex
-      //     );
-      //     //onCharacterMint();
-      //   }
-      // );
     }
 
     return () => {

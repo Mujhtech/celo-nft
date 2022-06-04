@@ -75,14 +75,7 @@ const App = () => {
     }
   };
 
-  // useEffect(() => {
-  //   // setIsLoading(true);
-  //   // checkIfWalletIsConnected();
-  // }, []);
-
-  /*
-   * Add this useEffect right under the other useEffect where you are calling checkIfWalletIsConnected
-   */
+  
   useEffect(() => {
     /*
      * The function we will call that interacts with out smart contract
