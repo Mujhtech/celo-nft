@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { transformCharacterData } from "../../constants";
+import { transformCharacterData } from "../../helpers";
 import "./Arena.css";
 import LoadingIndicator from "../LoadingIndicator";
 import { useBalance } from "../../hooks/useBalance";
@@ -22,8 +22,7 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
 
   const { blockNumber } = useBalance();
 
-  // UseEffects
-  // UseEffects
+  // UseEffect to fetch the boss metadata
   useEffect(() => {
     const fetchBoss = async () => {
       const bossTxn = await minterContract.methods.getBigBoss().call();
@@ -75,7 +74,7 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
         },
         onAttackComplete
       );
-     
+
     }
 
     /*
@@ -152,7 +151,6 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
               <div className="image-content">
                 <h2>{characterNFT.name}</h2>
                 <img
-                  // src={characterNFT.imageURI}
                   src={`https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv`}
                   alt={`Character ${characterNFT.name}`}
                 />

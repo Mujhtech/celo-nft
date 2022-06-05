@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import SelectCharacter from "./Components/SelectCharacter";
 import Arena from "./Components/Arena";
 import "./App.css";
-import { transformCharacterData } from "./constants";
+import { transformCharacterData } from "./helpers";
 import LoadingIndicator from "./Components/LoadingIndicator";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { useMinterContract } from "./hooks";
+import {truncateAddress} from "./helpers";
 
 const App = () => {
   const { address, connect } = useContractKit();
@@ -75,7 +76,7 @@ const App = () => {
     }
   };
 
-  
+
   useEffect(() => {
     /*
      * The function we will call that interacts with out smart contract
@@ -128,8 +129,7 @@ const App = () => {
               {address ? (
                 <p>
                   {" "}
-                  Wallet: {address.slice(0, 6)}...
-                  {address.slice(-4)}{" "}
+                  Wallet: {truncateAddress(address)}
                 </p>
               ) : (
                 <p> Not connected </p>

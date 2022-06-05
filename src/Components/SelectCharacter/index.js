@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import "./SelectCharacter.css";
-import { transformCharacterData } from "../../constants";
+import { transformCharacterData } from "../../helpers";
 
 import LoadingIndicator from "../LoadingIndicator";
 import { useBalance } from "../../hooks/useBalance";
