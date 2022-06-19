@@ -42,7 +42,7 @@ export default function CustomCharacter({ addNFT, mintingCharacter }) {
           />
         </div>
         <div>
-          <label>Attack Damagae</label>
+          <label>Attack Damage</label>
           <input
             type="number"
             name="attack-damage"
