@@ -1,10 +1,10 @@
-// import { create as ipfsHttpClient } from "ipfs-http-client";
-// import axios from "axios";
-// import { ethers } from "ethers";
+import { create as ipfsHttpClient } from "ipfs-http-client";
+import axios from "axios";
+import { ethers } from "ethers";
 import { transformCharacterData } from "../constants";
 
 // initialize IPFS
-// const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
+const client = ipfsHttpClient("https://ipfs.infura.io:5001/api/v0");
 
 // mint an NFT
 export const createNft = async (
@@ -34,18 +34,18 @@ export const createNft = async (
 };
 
 // function to upload a file to IPFS
-// export const uploadToIpfs = async (e) => {
-//   const file = e.target.files[0];
-//   if (!file) return;
-//   try {
-//     const added = await client.add(file, {
-//       progress: (prog) => console.log(`received: ${prog}`),
-//     });
-//     return `https://ipfs.infura.io/ipfs/${added.path}`;
-//   } catch (error) {
-//     console.log("Error uploading file: ", error);
-//   }
-// };
+export const uploadToIpfs = async (e) => {
+  const file = e.target.files[0];
+  if (!file) return;
+  try {
+    const added = await client.add(file, {
+      progress: (prog) => console.log(`received: ${prog}`),
+    });
+    return `https://ipfs.infura.io/ipfs/${added.path}`;
+  } catch (error) {
+    console.log("Error uploading file: ", error);
+  }
+};
 
 export const getAllCharacters = async (minterContract) => {
   try {
