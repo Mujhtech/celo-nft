@@ -2,11 +2,10 @@ import React, { useState, useEffect } from "react";
 import SelectCharacter from "./Components/SelectCharacter";
 import Arena from "./Components/Arena";
 import "./App.css";
-import { transformCharacterData } from "./helpers";
+import { transformCharacterData } from "./constants";
 import LoadingIndicator from "./Components/LoadingIndicator";
 import { useContractKit } from "@celo-tools/use-contractkit";
 import { useMinterContract } from "./hooks";
-import {truncateAddress} from "./helpers";
 
 const App = () => {
   const { address, connect } = useContractKit();
@@ -76,7 +75,9 @@ const App = () => {
     }
   };
 
-
+  /*
+   * Add this useEffect right under the other useEffect where you are calling checkIfWalletIsConnected
+   */
   useEffect(() => {
     /*
      * The function we will call that interacts with out smart contract
@@ -87,17 +88,13 @@ const App = () => {
       const characterNFT = await minterContract.methods
         .checkIfUserHasNFT()
         .call();
+
       if (characterNFT.name) {
         console.log("User has character NFT");
         setCharacterNFT(transformCharacterData(characterNFT));
       } else {
         console.log("No character NFT found");
       }
-
-      const allCharacters = await minterContract.methods
-        .getAllDefaultCharacters()
-        .call();
-      console.log("All characters:", allCharacters);
 
       setIsLoading(false);
     };
@@ -106,7 +103,6 @@ const App = () => {
      * We only want to run this, if we have a connected wallet
      */
     if (address && minterContract) {
-      console.log("CurrentAccount:", address);
       fetchNFTMetadata();
     }
   }, [minterContract]);
@@ -129,7 +125,8 @@ const App = () => {
               {address ? (
                 <p>
                   {" "}
-                  Wallet: {truncateAddress(address)}
+                  Wallet: {address.slice(0, 6)}...
+                  {address.slice(-4)}{" "}
                 </p>
               ) : (
                 <p> Not connected </p>

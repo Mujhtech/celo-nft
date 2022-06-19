@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { transformCharacterData } from "../../helpers";
+import { transformCharacterData } from "../../constants";
 import "./Arena.css";
 import LoadingIndicator from "../LoadingIndicator";
-import { useBalance } from "../../hooks/useBalance";
+import { attackBoss } from "../../utils/minter";
 
 /*
  * We pass in our characterNFT metadata so we can show a cool card in our UI
@@ -20,83 +20,47 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
 
   const [showToast, setShowToast] = useState(false);
 
-  const { blockNumber } = useBalance();
+  const onAttackComplete = (from, newBossHp, newPlayerHp) => {
+    const bossHp = parseInt(newBossHp);
+    const playerHp = parseInt(newPlayerHp);
+    const sender = from;
 
-  // UseEffect to fetch the boss metadata
+    /*
+     * If player is our own, update both player and boss Hp
+     */
+    if (address === sender.toLowerCase()) {
+      setBoss((prevState) => {
+        return { ...prevState, hp: bossHp };
+      });
+      setCharacterNFT((prevState) => {
+        return { ...prevState, hp: playerHp };
+      });
+    } else {
+      setBoss((prevState) => {
+        return { ...prevState, hp: bossHp };
+      });
+    }
+  };
+
+  // UseEffects
   useEffect(() => {
     const fetchBoss = async () => {
       const bossTxn = await minterContract.methods.getBigBoss().call();
-      console.log("Boss:", bossTxn);
       setBoss(transformCharacterData(bossTxn));
     };
 
-    /*
-     * Setup logic when this event is fired off
-     */
-    const onAttackComplete = (err, contractEvent) => {
-      console.log(`Listener fired: onAttackComplete`);
-      if (err) {
-        console.error("AttackComplete listener error", err);
-        return;
-      }
-      const { from, newBossHp, newPlayerHp } = contractEvent;
-      const bossHp = newBossHp.toNumber();
-      const playerHp = newPlayerHp.toNumber();
-      const sender = from.toString();
-
-      console.log(`AttackComplete: Boss Hp: ${bossHp} Player Hp: ${playerHp}`);
-
-      /*
-       * If player is our own, update both player and boss Hp
-       */
-      if (address === sender.toLowerCase()) {
-        setBoss((prevState) => {
-          return { ...prevState, hp: bossHp };
-        });
-        setCharacterNFT((prevState) => {
-          return { ...prevState, hp: playerHp };
-        });
-      } else {
-        /*
-         * If player isn't ours, update boss Hp only
-         */
-        setBoss((prevState) => {
-          return { ...prevState, hp: bossHp };
-        });
-      }
-    };
-
-    if (minterContract) {
+    if (minterContract && boss == null) {
       fetchBoss();
-      minterContract.events.AttackComplete(
-        {
-          fromBlock: 0,
-        },
-        onAttackComplete
-      );
-
     }
-
-    /*
-     * Make sure to clean up this event when this component is removed
-     */
-    return () => {
-      if (minterContract) {
-        // minterContract.off("AttackComplete", onAttackComplete);
-      }
-    };
   }, [minterContract]);
 
   const runAttackAction = async () => {
     try {
       if (minterContract) {
         setAttackState("attacking");
-        console.log("Attacking boss...");
-        const attackTxn = await minterContract.methods.attackBoss().call();
-        //await attackTxn.wait();
-        console.log("attackTxn:", attackTxn);
+        const attackTxn = await attackBoss(minterContract);
         setAttackState("hit");
-
+        onAttackComplete(attackTxn[0], attackTxn[1], attackTxn[2]);
         setShowToast(true);
         setTimeout(() => {
           setShowToast(false);
@@ -151,7 +115,7 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
               <div className="image-content">
                 <h2>{characterNFT.name}</h2>
                 <img
-                  src={`https://64.media.tumblr.com/tumblr_mbia5vdmRd1r1mkubo1_500.gifv`}
+                  src={characterNFT.imageURI}
                   alt={`Character ${characterNFT.name}`}
                 />
                 <div className="health-bar">

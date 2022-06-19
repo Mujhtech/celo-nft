@@ -1,0 +1,32 @@
+.custom-character {
+  display: flex;
+  flex-direction: column;
+}
+
+.custom-character form div {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.custom-character input {
+  margin-left: 10px;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  outline: none;
+}
+
+.custom-character button {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: rgb(32, 129, 226);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}

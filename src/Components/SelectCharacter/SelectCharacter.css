@@ -43,6 +43,19 @@
   font-weight: bold;
 }
 
+.custom-hero-btn {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  height: 40px;
+  border-radius: 10px;
+  border: none;
+  cursor: pointer;
+  background-color: rgb(32, 129, 226);
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+}
+
 .character-item .character-mint-button {
   position: absolute;
   bottom: 0;

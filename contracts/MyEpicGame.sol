@@ -162,7 +162,14 @@ contract MyEpicGame is ERC721 {
 
     // Users would be able to hit this function and get their NFT based on the
     // characterId they send in!
-    function mintCharacterNFT(uint256 _characterIndex) external {
+    function mintCharacterNFT(
+        uint256 _characterIndex,
+        string memory name,
+        string memory imageURI,
+        uint256 hp,
+        uint256 maxHp,
+        uint256 attackDamage
+    ) public payable returns (uint256) {
         // Get current tokenId (starts at 1 since we incremented in the constructor).
         uint256 newItemId = _tokenIds.current();
 
@@ -173,11 +180,11 @@ contract MyEpicGame is ERC721 {
         // the lesson below.
         nftHolderAttributes[newItemId] = CharacterAttributes({
             characterIndex: _characterIndex,
-            name: defaultCharacters[_characterIndex].name,
-            imageURI: defaultCharacters[_characterIndex].imageURI,
-            hp: defaultCharacters[_characterIndex].hp,
-            maxHp: defaultCharacters[_characterIndex].maxHp,
-            attackDamage: defaultCharacters[_characterIndex].attackDamage
+            name: name,
+            imageURI: imageURI,
+            hp: hp,
+            maxHp: maxHp,
+            attackDamage: attackDamage
         });
 
         console.log(
@@ -193,9 +200,19 @@ contract MyEpicGame is ERC721 {
         _tokenIds.increment();
 
         emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
+
+        return newItemId;
     }
 
-    function attackBoss() public {
+    function attackBoss()
+        public
+        payable
+        returns (
+            address,
+            uint256,
+            uint256
+        )
+    {
         // Get the state of the player's NFT.
         uint256 nftTokenIdOfPlayer = nftHolders[msg.sender];
         CharacterAttributes storage player = nftHolderAttributes[
@@ -240,6 +257,8 @@ contract MyEpicGame is ERC721 {
         console.log("Boss attacked player. New player hp: %s\n", player.hp);
 
         emit AttackComplete(msg.sender, bigBoss.hp, player.hp);
+
+        return (msg.sender, bigBoss.hp, player.hp);
     }
 
     function checkIfUserHasNFT()
