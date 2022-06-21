@@ -82,7 +82,7 @@ export const getCharacterNFT = async (minterContract) => {
   }
 };
 
-export const attackBoss = async (minterContract) => {
+export const attackBoss = async (minterContract, performActions) => {
   await performActions(async (kit) => {
     try {
       const { defaultAccount } = kit;
