@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import { transformCharacterData } from "../../constants";
 import "./Arena.css";
 import LoadingIndicator from "../LoadingIndicator";
-import { attackBoss } from "../../utils/minter";
+import { attackBoss, getCharacterNFT } from "../../utils/minter";
+import { useContractKit } from "@celo-tools/use-contractkit";
 
 /*
  * We pass in our characterNFT metadata so we can show a cool card in our UI
@@ -13,6 +14,8 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
    */
   const [boss, setBoss] = useState(null);
 
+  const { performActions } = useContractKit();
+
   /*
    * We are going to use this to add a bit of fancy animations during attacks
    */
@@ -20,26 +23,12 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
 
   const [showToast, setShowToast] = useState(false);
 
-  const onAttackComplete = (from, newBossHp, newPlayerHp) => {
-    const bossHp = parseInt(newBossHp);
-    const playerHp = parseInt(newPlayerHp);
-    const sender = from;
+  const onAttackComplete = async () => {
+    const character = await getCharacterNFT(minterContract);
+    setCharacterNFT(transformCharacterData(character));
 
-    /*
-     * If player is our own, update both player and boss Hp
-     */
-    if (address === sender.toLowerCase()) {
-      setBoss((prevState) => {
-        return { ...prevState, hp: bossHp };
-      });
-      setCharacterNFT((prevState) => {
-        return { ...prevState, hp: playerHp };
-      });
-    } else {
-      setBoss((prevState) => {
-        return { ...prevState, hp: bossHp };
-      });
-    }
+    const bossTxn = await minterContract.methods.getBigBoss().call();
+    setBoss(transformCharacterData(bossTxn));
   };
 
   // UseEffects
@@ -58,9 +47,9 @@ const Arena = ({ characterNFT, setCharacterNFT, minterContract, address }) => {
     try {
       if (minterContract) {
         setAttackState("attacking");
-        const attackTxn = await attackBoss(minterContract);
+        await attackBoss(minterContract, performActions);
         setAttackState("hit");
-        onAttackComplete(attackTxn[0], attackTxn[1], attackTxn[2]);
+        await onAttackComplete();
         setShowToast(true);
         setTimeout(() => {
           setShowToast(false);

@@ -1,6 +1,4 @@
 import { create as ipfsHttpClient } from "ipfs-http-client";
-import axios from "axios";
-import { ethers } from "ethers";
 import { transformCharacterData } from "../constants";
 
 // initialize IPFS
@@ -28,7 +26,10 @@ export const createNft = async (
 
       return transaction;
     } catch (error) {
-      console.log("Error uploading file: ", error);
+      console.log("Error create nft: ", error);
+      if (error && error.message) {
+        alert("Error create nft" + error.message);
+      }
     }
   });
 };
@@ -44,6 +45,9 @@ export const uploadToIpfs = async (e) => {
     return `https://ipfs.infura.io/ipfs/${added.path}`;
   } catch (error) {
     console.log("Error uploading file: ", error);
+    if (error && error.message) {
+      alert(error.message);
+    }
   }
 };
 
@@ -59,7 +63,9 @@ export const getAllCharacters = async (minterContract) => {
 
     return characters;
   } catch (e) {
-    console.log({ e });
+    if (e && e.message) {
+      alert(e.message);
+    }
   }
 };
 
@@ -70,15 +76,24 @@ export const getCharacterNFT = async (minterContract) => {
       .call();
     return characterNFT;
   } catch (e) {
-    console.log({ e });
+    if (e && e.message) {
+      alert(e.message);
+    }
   }
 };
 
 export const attackBoss = async (minterContract) => {
-  try {
-    const attack = await minterContract.methods.attackBoss().call();
-    return attack;
-  } catch (error) {
-    console.log({ error });
-  }
+  await performActions(async (kit) => {
+    try {
+      const { defaultAccount } = kit;
+      const attack = await minterContract.methods
+        .attackBoss()
+        .send({ from: defaultAccount });
+      return attack;
+    } catch (error) {
+      if (error && error.message) {
+        alert(error.message);
+      }
+    }
+  });
 };
